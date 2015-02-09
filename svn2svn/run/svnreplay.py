@@ -811,14 +811,15 @@ def real_main(args):
     target_repos_url = target_info['repos_url']       # e.g. 'http://server/svn/target'
     target_base = target_url[len(target_repos_url):]  # e.g. '/trunk'
 
+    source_repos_full_url = join_path(source_repos_url, source_base)
     # Init start and end revision
     try:
-        source_start_rev = svnclient.get_rev(source_repos_url, options.rev_start if options.rev_start else 1)
+        source_start_rev = svnclient.get_rev(source_repos_full_url, options.rev_start if options.rev_start else 1)
     except ExternalCommandFailed:
         print "Error: Invalid start source revision value: %s" % (options.rev_start)
         return 1
     try:
-        source_end_rev   = svnclient.get_rev(source_repos_url, options.rev_end   if options.rev_end   else "HEAD")
+        source_end_rev   = svnclient.get_rev(source_repos_full_url, options.rev_end   if options.rev_end   else "HEAD")
     except ExternalCommandFailed:
         print "Error: Invalid end source revision value: %s" % (options.rev_end)
         return 1
@@ -881,7 +882,7 @@ def real_main(args):
 
         # For the initial commit to the target URL, export all the contents from
         # the source URL at the start-revision.
-        disp_svn_log_summary(svnclient.get_one_svn_log_entry(source_repos_url, source_start_rev, source_start_rev))
+        disp_svn_log_summary(svnclient.get_one_svn_log_entry(source_repos_full_url, source_start_rev, source_start_rev))
         # Export and add file-contents from source_url@source_start_rev
         source_start_url = source_url if not source_ancestors else source_repos_url+source_ancestors[len(source_ancestors)-1]['copyfrom_path']
         top_paths = svnclient.list(source_start_url, source_start_rev)

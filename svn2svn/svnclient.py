@@ -40,7 +40,7 @@ def safe_path(path, rev_number=None):
     """
     # URL-escape URL's, but leave local WC paths alone
     if "://" in path:
-        path = urllib.quote(path, ":/")
+        path = urllib.quote(path.encode('utf-8'), ":/")
     # Add peg revision
     if rev_number is not None:
         path += "@"+str(rev_number)
@@ -202,7 +202,8 @@ def get_rev(svn_url_or_wc, rev_number):
     """
     Evaluate a given SVN revision pattern, to map it to a discrete rev #.
     """
-    xml_string = run_svn(['info', '--xml', '-r', rev_number, safe_path(svn_url_or_wc, rev_number)], fail_if_stderr=True)
+    #xml_string = run_svn(['info', '--xml', '-r', rev_number, safe_path(svn_url_or_wc, rev_number)], fail_if_stderr=True)
+    xml_string = run_svn(['info', '--xml', '-r', rev_number, safe_path(svn_url_or_wc)], fail_if_stderr=True)
     info = _parse_svn_info_xml(xml_string)
     return info['revision']
 
